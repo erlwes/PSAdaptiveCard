@@ -205,7 +205,7 @@ $img = New-Image -url "https://adaptivecards.microsoft.com/images/painting3.jpeg
 New-AdaptiveCard -BodyContent $img | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
 
-<img width="923" height="222" alt="image" src="https://github.com/user-attachments/assets/b309f123-7644-4b32-a06d-ba11bfbcb99c" />
+<img width="920" height="592" alt="image" src="https://github.com/user-attachments/assets/868e30f9-109c-435c-ae86-6330a50b978a" />
 
 ---
 
@@ -232,7 +232,7 @@ $icon = New-Icon -name "CheckmarkCircle" -color "Good" -size "Large" -horizontal
 New-AdaptiveCard -BodyContent $icon | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
 
-![Uploading image.png…]()
+<img width="923" height="222" alt="image" src="https://github.com/user-attachments/assets/b309f123-7644-4b32-a06d-ba11bfbcb99c" />
 
 ---
 
