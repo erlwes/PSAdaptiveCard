@@ -16,7 +16,7 @@
     MIT
 
 .VERSION
-    0.0.7
+    0.0.8
 
 .NOTES
     - Requires PowerShell 5.1 or later.
@@ -65,7 +65,7 @@ function New-TextBlock {
         [Parameter(Mandatory = $false)][ValidateSet('Default', 'Small', 'Medium', 'Large', 'ExtraLarge', IgnoreCase = $true)]
         [string]$size,
 
-        [Parameter(Mandatory = $false)][ValidateSet('default', 'lighter', 'bolder', IgnoreCase = $false)]
+        [Parameter(Mandatory = $false)][ValidateSet('default', 'lighter', 'bolder', IgnoreCase = $true)]
         [string]$weight,
 
         [Parameter(Mandatory = $false)]
@@ -322,7 +322,7 @@ function New-Image {
         }
     }
     process {
-        if ($backgroundColor)       { $imageObject | Add-Member -NotePropertyName 'backgroundColor' -NotePropertyValue $vackgroundColor }
+        if ($backgroundColor)       { $imageObject | Add-Member -NotePropertyName 'backgroundColor' -NotePropertyValue $backgroundColor }
         if ($height -ne 'auto')     { $imageObject | Add-Member -NotePropertyName 'height' -NotePropertyValue $height }
         if ($horizontalAlignment)   { $imageObject | Add-Member -NotePropertyName 'horizontalAlignment' -NotePropertyValue $horizontalAlignment }    
         if ($size)                  { $imageObject | Add-Member -NotePropertyName 'size' -NotePropertyValue $size }
@@ -418,7 +418,7 @@ function New-ColumnSet {
 
 function New-FactSet {
     param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
         [array]$Facts
     )
     begin {
@@ -449,14 +449,11 @@ function New-ProgressBar {
         [Parameter(Mandatory = $false)]
         [int]$max = 100,
 
-        [Parameter(Mandatory = $false)]
-        [string]$label,
-
         [Parameter(Mandatory = $false)][ValidateSet('default', 'accent', 'good', 'warning', 'attention', IgnoreCase = $false)]
         [string]$color,
 
-        [Parameter(Mandatory = $false)][ValidateSet('default', 'small', 'medium', 'large', IgnoreCase = $false)]
-        [string]$size
+        [Parameter(Mandatory = $false)][ValidateSet('default', 'none', 'extrasmall', 'small', 'medium', 'large', 'extralarge', 'padding', IgnoreCase = $false)]
+        [string]$spacing
     )
     begin {
         $progressBar = [pscustomobject]@{
@@ -465,10 +462,9 @@ function New-ProgressBar {
             max   = $max
         }
     }
-    process {
-        if ($label) { $progressBar | Add-Member -NotePropertyName 'label' -NotePropertyValue $label }
+    process {        
         if ($color) { $progressBar | Add-Member -NotePropertyName 'color' -NotePropertyValue $color }
-        if ($size)  { $progressBar | Add-Member -NotePropertyName 'size' -NotePropertyValue $size }
+        if ($spacing)  { $progressBar | Add-Member -NotePropertyName 'spacing' -NotePropertyValue $spacing }
     }
     end {
         return $progressBar
