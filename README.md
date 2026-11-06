@@ -12,7 +12,7 @@ To get started with worksflows and generate a webhook URL, look [here](https://s
 #Use functions to add a header-text and a table to a card.
 $cardContent = @(
     New-TextBlock -Size extraLarge -Weight bolder -Text 'Services'
-    Get-Service | Select-Object Name, DisplayName, Status -First 5 | New-Table -HighlightValueMatch 'Stopped' -HighlightValueStyle 'attention' -headerRowStyle 'accent' -gridStyle 'accent'
+    Get-Service | Select-Object Name, DisplayName, Status -First 5 | New-Table -HighlightValueMatch 'Stopped' -HighlightValueStyle 'attention'
 )
 
 #We must provide a webhook-URL. This is a partial example:
@@ -22,7 +22,7 @@ $WebhookURI = 'https://prod-140.westeurope.logic.azure.com:443/workflows/[REDACT
 New-AdaptiveCard -BodyContent $cardContent | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
 This results in the following message to your Teams-channel:
-![image](https://github.com/user-attachments/assets/8ceb598e-2621-4523-bb1c-f674de02a2dc)
+<img width="926" height="428" alt="image" src="https://github.com/user-attachments/assets/ee52cfdb-770d-43c7-a036-ee9351a2e8ae" />
 
 
 ## Install
