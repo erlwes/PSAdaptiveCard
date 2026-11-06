@@ -346,18 +346,25 @@ Creates a ProgressBar element.
 |---|---|---|---|
 | `value` | Integer | Yes | Current progress value. Valid range: 0–100. |
 | `max` | Integer | No | Maximum progress value. Default: `100`. |
-| `label` | String | No | Label displayed alongside the progress bar. |
 | `color` | String | No | Color: `default`, `accent`, `good`, `warning`, `attention`. |
-| `size` | String | No | Size: `default`, `small`, `medium`, `large`. |
+| `spacing` | String | No | Spacing: `default`, `none`, `extrasmall`, `small`, `medium`, `large`, `extralarge`, `padding`. |
 
 **Example**
 
 ```PwSh
-$pb = New-ProgressBar -value 75 -max 100 -label "Deployment Progress" -color "good" -size "large"
-New-AdaptiveCard -BodyContent $pb | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
+$pbg = New-ProgressBar -value 75 -max 100 -color "good" -spacing "large"
+$textg = New-TextBlock -text 'Good' -size Small -spacing ExtraSmall
+
+$pbw = New-ProgressBar -value 25 -max 100 -color "warning" -spacing "large"
+$textw = New-TextBlock -text 'Warning' -size Small -spacing ExtraSmall
+
+$pba = New-ProgressBar -value 25 -max 100 -color "attention"  -spacing "large"
+$texta = New-TextBlock -text 'Attention' -size Small -spacing ExtraSmall
+
+New-AdaptiveCard -BodyContent ($pbg, $textg, $pbw, $textw, $pba, $texta) | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
 
-<img width="926" height="176" alt="image" src="https://github.com/user-attachments/assets/457ec273-fb05-4fd9-8f7f-d5cd1f72cfc9" />
+<img width="924" height="251" alt="image" src="https://github.com/user-attachments/assets/156d76cd-bace-4a78-a959-7ec6f2d5cc0b" />
 
 
 ---
