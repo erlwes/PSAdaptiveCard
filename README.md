@@ -2,10 +2,12 @@
 ![PowerShell Gallery Downloads](https://img.shields.io/powershellgallery/dt/PSAdaptiveCard)
 
 # PSAdaptiveCard
-The PSAdaptiveCard PowerShell module designed to create JSON-formatted Adaptive Cards. Adaptive Cards are a way to present content in applications such as Microsoft Teams. This module includes functions to construct various elements of an Adaptive Card, and a function for posting these messages to Teams channels using Workflow webhooks.
+The PSAdaptiveCard PowerShell module designed to create JSON-formatted Adaptive Cards. Adaptive Cards are a way to present content in Microsoft Teams. This module includes functions to construct various elements of an Adaptive Card, and a function for posting these messages to Teams channels using Workflow webhooks.
 
 To get started with worksflows and generate a webhook URL, look [here](https://support.microsoft.com/en-us/office/post-a-workflow-when-a-webhook-request-is-received-in-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498#:~:text=An%20Incoming%20webhook%20lets%20external,a%20webhook%20request%20is%20received.&text=next%20to%20the%20channel%20or,for%2C%20and%20then%20select%20Workflows.).
 
+## Install
+`Install-Module -Name PSAdaptiveCard`
 
 ## Straight to the point - an example
 ```PowerShell
@@ -24,9 +26,6 @@ New-AdaptiveCard -BodyContent $cardContent | Send-JsonToTeamsWebhook -WebhookURI
 This results in the following message to your Teams-channel:
 <img width="926" height="428" alt="image" src="https://github.com/user-attachments/assets/ee52cfdb-770d-43c7-a036-ee9351a2e8ae" />
 
-
-## Install
-`Install-Module -Name PSAdaptiveCard`
 
 ## Functions
 
@@ -289,26 +288,43 @@ Creates a FactSet element containing title/value pairs.
 |---|---|---|---|
 | `Facts` | Array | Yes | Array of objects containing `title` and `value` properties. Accepts pipeline input. |
 
-**Example**
+**Example 1**
 
 ```PwSh
 $facts = @(
-[PSCustomObject]@{
-title = "Hostname"
-value = "Server01"
-}
-[PSCustomObject]@{
-title = "Operating System"
-value = "Windows Server 2022"
-}
-[PSCustomObject]@{
-title = "Status"
-value = "Online"
-}
+    [PSCustomObject]@{
+        title = "Hostname"
+        value = "Server01"
+    }
+    [PSCustomObject]@{
+        title = "Operating System"
+        value = "Windows Server 2022"
+    }
+    [PSCustomObject]@{
+        title = "Status"
+        value = "Online"
+    }
 )
-
-$facts | New-FactSet
+New-AdaptiveCard -BodyContent ($facts | New-FactSet) | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+<img width="926" height="239" alt="image" src="https://github.com/user-attachments/assets/0aac760c-cb1c-4610-ab9d-d354def469c9" />
+
+
+**Example 2**
+
+```PwSH
+$Properties = @(    
+    @{Name = 'title'; expression = {$_.Name}}
+    @{Name = 'value'; expression = {$_.DisplayName}}    
+)
+$factSet = Get-Service | Select-Object $Properties -First 2 | New-FactSet
+New-AdaptiveCard -BodyContent $factSet | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
+
+```
+
+<img width="923" height="212" alt="image" src="https://github.com/user-attachments/assets/dca1eb46-1f3e-4e9d-b045-d2bc87f69df1" />
+
 
 ---
 
@@ -329,13 +345,12 @@ Creates a ProgressBar element.
 **Example**
 
 ```PwSh
-New-ProgressBar `
--value 75 `
--max 100 `
--label "Deployment Progress" `
--color "good" `
--size "large"
+$pb = New-ProgressBar -value 75 -max 100 -label "Deployment Progress" -color "good" -size "large"
+New-AdaptiveCard -BodyContent $pb | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+<img width="926" height="176" alt="image" src="https://github.com/user-attachments/assets/457ec273-fb05-4fd9-8f7f-d5cd1f72cfc9" />
+
 
 ---
 
@@ -360,17 +375,18 @@ An AccordionPage consists of a header and an array of Adaptive Card elements dis
 **Example**
 
 ```PwSh
-$page = New-AccordionPage `
--headerTitle "Server Information" `
--items @(
-New-TextBlock -Text "Hostname: Server01"
-New-TextBlock -Text "Status: Online" -color "Good"
-) `
--expanded $true `
--showBorder $true `
--roundedCorners $true `
--style "emphasis"
+$accordionPage = New-AccordionPage -headerTitle "Server Information" -items @(
+    New-TextBlock -Text "Hostname: Server01"
+    New-TextBlock -Text "Status: Online" -color "Good"
+) -expanded $true -showBorder $true -roundedCorners $true -style "emphasis"
+
+$accordion = New-Accordion -pages $accordionPage -allowCollapseAllPages $true -allowMultipleExpandedPages $true
+
+New-AdaptiveCard -BodyContent $accordion | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+<img width="922" height="295" alt="image" src="https://github.com/user-attachments/assets/c0d785ff-bb0d-47f0-b88f-9e82fb59a007" />
+
 
 ---
 
@@ -389,26 +405,7 @@ Creates an Accordion element containing one or more AccordionPage elements.
 **Example**
 
 ```PwSh
-$pages = @(
-New-AccordionPage `
--headerTitle "Server Information" `
--items @(
-New-TextBlock -Text "Hostname: Server01"
-New-TextBlock -Text "Status: Online"
-)
-
-New-AccordionPage `
--headerTitle "System Information" `
--items @(
-New-TextBlock -Text "Windows Server 2022"
-New-TextBlock -Text "Version 21H2"
-)
-)
-
-New-Accordion `
--pages $pages `
--allowCollapseAllPages $true `
--allowMultipleExpandedPages $true
+# See previous example (New-AccordionPage).
 ```
 
 ---
@@ -455,13 +452,13 @@ Each data point requires an `x` and `y` property. An optional `color` property c
 
 ```PwSh
 $data = @(
-@{ x = "January"; y = 120 }
-@{ x = "February"; y = 180 }
-@{ x = "March"; y = 150 }
-@{ x = "April"; y = 220 }
+    @{ x = "January"; y = 120 }
+    @{ x = "February"; y = 180 }
+    @{ x = "March"; y = 150 }
+    @{ x = "April"; y = 220 }
 )
 
-New-VerticalBarChart `
+$verticalBarChart = New-VerticalBarChart `
 -data $data `
 -title "Monthly Sales" `
 -xAxisTitle "Month" `
@@ -470,7 +467,12 @@ New-VerticalBarChart `
 -showBarValues $true `
 -showLegend $true `
 -colorSet "categorical"
+
+New-AdaptiveCard -BodyContent $verticalBarChart | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+<img width="923" height="532" alt="image" src="https://github.com/user-attachments/assets/a681d876-c0d1-4e70-8420-21938548bede" />
+
 
 ---
 
@@ -513,19 +515,19 @@ The gauge consists of a current value and one or more segments. Each segment def
 
 ```PwSh
 $segments = @(
-@{
-legend = "Completed"
-size = 75
-color = "good"
-}
-@{
-legend = "Remaining"
-size = 25
-color = "neutral"
-}
+    @{
+        legend = "Completed"
+        size = 75
+        color = "good"
+    }
+    @{
+        legend = "Remaining"
+        size = 25
+        color = "neutral"
+    }
 )
 
-New-GaugeChart `
+$gaugeChart = New-GaugeChart `
 -value 75 `
 -segments $segments `
 -min 0 `
@@ -536,7 +538,12 @@ New-GaugeChart `
 -showLegend $true `
 -showMinMax $true `
 -showNeedle $true
+
+New-AdaptiveCard -BodyContent $gaugeChart | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+<img width="923" height="350" alt="image" src="https://github.com/user-attachments/assets/282719f9-5c87-4017-97f2-4687614771a9" />
+
 
 ---
 
@@ -576,13 +583,13 @@ Each data point requires an `x` and `y` property. An optional `color` property c
 
 ```PwSh
 $data = @(
-@{ x = "CPU"; y = 65 }
-@{ x = "Memory"; y = 80 }
-@{ x = "Disk"; y = 45 }
-@{ x = "Network"; y = 30 }
+    @{ x = "CPU"; y = 65 }
+    @{ x = "Memory"; y = 80 }
+    @{ x = "Disk"; y = 45 }
+    @{ x = "Network"; y = 30 }
 )
 
-New-HorizontalBarChart `
+$horizontalBarChart = New-HorizontalBarChart `
 -data $data `
 -title "Resource Utilization" `
 -xAxisTitle "Utilization (%)" `
@@ -590,7 +597,12 @@ New-HorizontalBarChart `
 -displayMode "AbsoluteWithAxis" `
 -showBarValues $true `
 -colorSet "categorical"
+
+New-AdaptiveCard -BodyContent $horizontalBarChart | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+<img width="923" height="381" alt="image" src="https://github.com/user-attachments/assets/aac0a3f6-4968-41c1-9b74-f2336d14d84c" />
+
 
 ---
 
@@ -631,7 +643,7 @@ Send-JsonToTeamsWebhook `
 -fullWidth
 ```
 
-**Example – Generate JSON without sending**
+**Example – Generate JSON without sending (for debugging)**
 
 ````PwSh
 $card = New-AdaptiveCard -BodyContent @(
@@ -664,79 +676,73 @@ $card | Send-JsonToTeamsWebhook `
 The following example demonstrates how multiple functions can be combined to create a complete Adaptive Card and send it to Microsoft Teams.
 
 ```PwSh
-# Create facts
-$facts = @(
-[PSCustomObject]@{
-title = "Hostname"
-value = "Server01"
-}
-[PSCustomObject]@{
-title = "Operating System"
-value = "Windows Server 2022"
-}
-[PSCustomObject]@{
-title = "Status"
-value = "Online"
-}
-)
+# --------------------------------------------------
+# Get services on local computer and do some math
+# --------------------------------------------------
+$services = Get-Service | Select-Object Name, Status
 
-# Create chart data
+$totalServices = $services.Count
+$runningServices = @($services | Where-Object { $_.Status -eq 'Running' })
+$stoppedServices = @($services | Where-Object { $_.Status -ne 'Running' })
+
+$runningCount = $runningServices.Count
+$stoppedCount = $stoppedServices.Count
+
+$runningPercentage = if ($totalServices -gt 0) {
+    [math]::Round(($runningCount / $totalServices) * 100, 1)
+} else { 0 }
+
+$stoppedPercentage = if ($totalServices -gt 0) {
+    [math]::Round(($stoppedCount / $totalServices) * 100, 1)
+} else { 0 }
+
+
+# --------------------------------------------------
+# Create horizontal bar chart
+# --------------------------------------------------
 $chartData = @(
-@{ x = "January"; y = 120 }
-@{ x = "February"; y = 180 }
-@{ x = "March"; y = 150 }
+    @{
+        x = "Running ($runningCount | $runningPercentage%)"
+        y = $runningCount
+        color = "good"
+    },
+    @{
+        x = "Not Running ($stoppedCount | $stoppedPercentage%)"
+        y = $stoppedCount
+        color = "attention"
+    }
 )
+$chart = New-HorizontalBarChart -data $chartData -title "Windows Services Status" -xAxisTitle "Number of Services" -yAxisTitle "Status" -displayMode "AbsoluteWithAxis" -showBarValues $true
 
-# Create accordion page
-$accordionPage = New-AccordionPage `
--headerTitle "Additional Information" `
--items @(
-New-TextBlock -Text "System is operating normally."
-New-ProgressBar -value 85 -label "System Health" -color "good"
-)
 
-# Create accordion
-$accordion = New-Accordion `
--pages @($accordionPage)
+# --------------------------------------------------
+# Create accordion with details on stopped services
+# --------------------------------------------------
+$first50 = $stoppedServices | Select-Object Name, Status -First 40 | New-Table -firstRowAsHeader:$true
+$detailsPage = New-AccordionPage -headerTitle "Stopped services" -items @($first50) -roundedCorners $true -style warning
+$detailsAccordion = New-Accordion -pages @($detailsPage)
 
-# Create card content
+
+# --------------------------------------------------
+# Create Adaptive Card and send it
+# --------------------------------------------------
 $cardContent = @(
-New-TextBlock `
--Text "Server Overview" `
--size "Large" `
--weight "bolder"
-
-New-FactSet -Facts $facts
-
-New-TextBlock `
--Text "Monthly Performance" `
--size "Medium" `
--weight "bolder"
-
-New-VerticalBarChart `
--data $chartData `
--showBarValues $true `
--colorSet "categorical"
-
-$accordion
+    New-TextBlock -text "Windows Services Overview" -size "Large" -weight "bolder" -color "Accent"
+    New-TextBlock -text "Total services: $totalServices" -weight "bolder" -spacing "Medium"
+    $chart
+    $detailsAccordion
 )
 
-# Create Adaptive Card
-$card = New-AdaptiveCard -BodyContent $cardContent
-
-# Send to Microsoft Teams
-Send-JsonToTeamsWebhook `
--webhookURI "https://example.webhook.office.com/..." `
--adaptiveCard $card `
--fullWidth
+$adaptiveCard = New-AdaptiveCard -BodyContent $cardContent
+Send-JsonToTeamsWebhook -webhookURI $webhookURI -adaptiveCard $adaptiveCard -fullWidth
 ```
+
+<img width="924" height="623" alt="image" src="https://github.com/user-attachments/assets/cf895b85-0962-4cd6-866c-703147d745f7" />
 
 ---
 
 ## References
-
 - Adaptive Cards: https://adaptivecards.io
 - Microsoft Adaptive Cards: https://adaptivecards.microsoft.com/
 - Text formatting: https://adaptivecards.microsoft.com/?topic=text-formatting
 - Icon catalog: https://adaptivecards.microsoft.com/?topic=icon-catalog
-
