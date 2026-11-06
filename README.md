@@ -51,6 +51,8 @@ $cardContent = @(
 $card = New-AdaptiveCard -BodyContent $cardContent
 $card | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+<img width="927" height="216" alt="image" src="https://github.com/user-attachments/assets/0a7eb0b7-d459-4786-86a5-d60dde6113cf" />
+
 
 ---
 
@@ -87,6 +89,7 @@ $cardContent = @(
 )
 New-AdaptiveCard -BodyContent $cardContent | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+<img width="927" height="189" alt="image" src="https://github.com/user-attachments/assets/e4e6b747-434b-4b3e-a967-e0993325ddba" />
 
 ---
 
@@ -118,6 +121,7 @@ $codeBlock = New-CodeBlock -codeSnippet $code -language "PowerShell" -startLineN
 
 New-AdaptiveCard -BodyContent $codeBlock | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+<img width="925" height="219" alt="image" src="https://github.com/user-attachments/assets/d89744fb-3074-4530-8c54-f1546a5d945e" />
 
 ---
 
@@ -143,28 +147,30 @@ Supports optional highlighting of cell values based on a regular expression matc
 | `horizontalCellContentAlignment` | String | No | Horizontal alignment: `left`, `center`, `right`. |
 | `verticalCellContentAlignment` | String | No | Vertical alignment: `top`, `center`, `bottom`. |
 
-**Example**
+**Example 1**
 
 ```PwSh
 $data = @(
-[PSCustomObject]@{
-Name = "Server01"
-Status = "Online"
-CPU = "25%"
-}
-[PSCustomObject]@{
-Name = "Server02"
-Status = "Offline"
-CPU = "0%"
-}
+    [PSCustomObject]@{
+        Name = "Server01"
+        Status = "Online"
+        CPU = "25%"
+    }
+    [PSCustomObject]@{
+        Name = "Server02"
+        Status = "Offline"
+        CPU = "0%"
+    }
 )
-
-$table = $data | New-Table `
--highlightValueMatch "Offline" `
--highlightValueStyle "attention" `
--headerRowStyle "accent"
-
+$table = $data | New-Table
+New-AdaptiveCard -BodyContent $table | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+<img width="924" height="276" alt="image" src="https://github.com/user-attachments/assets/76fbcebc-7283-4534-9ce8-3ab499fc23e3" />
+
+**Example 2**
+$table = Get-Service W32Time, Spooler | Select-Object Name, DisplayName, Status | New-Table
+New-AdaptiveCard -BodyContent $table | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
+<img width="920" height="269" alt="image" src="https://github.com/user-attachments/assets/02895525-7095-49b4-9e5d-139e56c3805f" />
 
 ---
 
