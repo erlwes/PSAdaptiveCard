@@ -4,13 +4,19 @@
 # PSAdaptiveCard
 The PSAdaptiveCard PowerShell module designed to create JSON-formatted Adaptive Cards. Adaptive Cards are a way to present content in Microsoft Teams. This module includes functions to construct various elements of an Adaptive Card, and a function for posting these messages to Teams channels using Workflow webhooks.
 
+---
+
 ## Install
 `Install-Module -Name PSAdaptiveCard`
+
+---
 
 ## Getting started with webhook workflows in Teams
 To get started with worksflows and generate a webhook URL, look [here](https://support.microsoft.com/en-us/office/post-a-workflow-when-a-webhook-request-is-received-in-microsoft-teams-8ae491c7-0394-4861-ba59-055e33f75498#:~:text=An%20Incoming%20webhook%20lets%20external,a%20webhook%20request%20is%20received.&text=next%20to%20the%20channel%20or,for%2C%20and%20then%20select%20Workflows.).
 
-## Straight to the point - an example
+---
+
+## A minimal complete example of use
 ```PowerShell
 #Use functions to add a header-text and a table to a card.
 $cardContent = @(
@@ -27,6 +33,7 @@ New-AdaptiveCard -BodyContent $cardContent | Send-JsonToTeamsWebhook -WebhookURI
 This results in the following message to your Teams-channel:
 <img width="926" height="428" alt="image" src="https://github.com/user-attachments/assets/ee52cfdb-770d-43c7-a036-ee9351a2e8ae" />
 
+---
 
 ## Functions
 
