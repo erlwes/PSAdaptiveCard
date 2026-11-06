@@ -642,48 +642,29 @@ The function can also return the generated JSON without sending it.
 
 ```PwSh
 $cardContent = @(
-New-TextBlock `
--Text "Deployment completed successfully" `
--size "Large" `
--weight "bolder" `
--color "Good"
-
-New-TextBlock `
--Text "All servers have been updated."
+    New-TextBlock -Text "Deployment completed successfully" -size "Large" -weight "bolder" -color "Good"
+    New-TextBlock -Text "All servers have been updated."
 )
-
 $card = New-AdaptiveCard -BodyContent $cardContent
-
-Send-JsonToTeamsWebhook `
--webhookURI "https://example.webhook.office.com/..." `
--adaptiveCard $card `
--fullWidth
+Send-JsonToTeamsWebhook -webhookURI $WebhookURI -adaptiveCard $card -fullWidth
 ```
 
 **Example – Generate JSON without sending (for debugging)**
 
 ````PwSh
 $card = New-AdaptiveCard -BodyContent @(
-New-TextBlock -Text "Hello, Teams!"
+    New-TextBlock -Text "Hello, Teams!"
 )
-
-$json = Send-JsonToTeamsWebhook `
--webhookURI "https://example.webhook.office.com/..." `
--adaptiveCard $card `
--onlyConvertToJson
-
-$json
+$json = Send-JsonToTeamsWebhook -webhookURI $WebhookURI -adaptiveCard $card -onlyConvertToJson
 ````
 
 **Example – Pipeline usage**
 
 ```PwSh
 $card = New-AdaptiveCard -BodyContent @(
-New-TextBlock -Text "Pipeline example"
+    New-TextBlock -Text "Pipeline example"
 )
-
-$card | Send-JsonToTeamsWebhook `
--webhookURI "https://example.webhook.office.com/..."
+$card | Send-JsonToTeamsWebhook -webhookURI $WebhookURI
 ```
 
 ---
@@ -757,6 +738,11 @@ Send-JsonToTeamsWebhook -webhookURI $webhookURI -adaptiveCard $adaptiveCard -ful
 <img width="924" height="623" alt="image" src="https://github.com/user-attachments/assets/cf895b85-0962-4cd6-866c-703147d745f7" />
 
 ---
+
+## Pitfalls and debugging
+- The payload for webhooks can not be bigger than 28 KB. Decrease content, or split and send multiple cards
+- To see the error, open the workflow in Teams, click run history and drill down to see why it failed
+
 
 ## References
 - Adaptive Cards: https://adaptivecards.io
