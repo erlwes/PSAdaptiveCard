@@ -51,8 +51,8 @@ $cardContent = @(
 $card = New-AdaptiveCard -BodyContent $cardContent
 $card | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
-<img width="927" height="216" alt="image" src="https://github.com/user-attachments/assets/0a7eb0b7-d459-4786-86a5-d60dde6113cf" />
 
+<img width="927" height="216" alt="image" src="https://github.com/user-attachments/assets/0a7eb0b7-d459-4786-86a5-d60dde6113cf" />
 
 ---
 
@@ -165,11 +165,16 @@ $data = @(
 $table = $data | New-Table
 New-AdaptiveCard -BodyContent $table | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
 <img width="924" height="276" alt="image" src="https://github.com/user-attachments/assets/76fbcebc-7283-4534-9ce8-3ab499fc23e3" />
 
 **Example 2**
+
+```PwSh
 $table = Get-Service W32Time, Spooler | Select-Object Name, DisplayName, Status | New-Table
 New-AdaptiveCard -BodyContent $table | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
+```
+
 <img width="920" height="269" alt="image" src="https://github.com/user-attachments/assets/02895525-7095-49b4-9e5d-139e56c3805f" />
 
 ---
@@ -196,13 +201,11 @@ Creates an Image element with optional size, alignment, and display properties.
 **Example**
 
 ```PwSh
-New-Image `
--url "https://example.com/server.png" `
--altText "Server status illustration" `
--height "150px" `
--width "300px" `
--horizontalAlignment "center"
+$img = New-Image -url "https://adaptivecards.microsoft.com/images/painting3.jpeg" -altText "Painting" -horizontalAlignment "center"
+New-AdaptiveCard -BodyContent $img | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+<img width="923" height="222" alt="image" src="https://github.com/user-attachments/assets/b309f123-7644-4b32-a06d-ba11bfbcb99c" />
 
 ---
 
@@ -225,12 +228,11 @@ Creates an Icon element.
 **Example**
 
 ```PwSh
-New-Icon `
--name "CheckmarkCircle" `
--color "Good" `
--size "Large" `
--horizontalAlignment "Center"
+$icon = New-Icon -name "CheckmarkCircle" -color "Good" -size "Large" -horizontalAlignment "Center"
+New-AdaptiveCard -BodyContent $icon | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+![Uploading image.png…]()
 
 ---
 
