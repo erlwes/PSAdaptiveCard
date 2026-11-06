@@ -263,26 +263,28 @@ Columns can contain other Adaptive Card elements, allowing more complex layouts.
 
 ```PwSh
 $columns = @(
-@{
-type = "Column"
-width = "stretch"
-items = @(
-New-TextBlock -Text "Server 01" -weight "bolder"
-New-TextBlock -Text "Online" -color "Good"
+    @{
+        type = "Column"
+        width = "stretch"
+        items = @(
+            New-TextBlock -Text "Server 01" -weight "bolder"
+            New-TextBlock -Text "Online" -color "Good"
+        )
+    }
+    @{
+        type = "Column"
+        width = "stretch"
+        items = @(
+            New-TextBlock -Text "Server 02" -weight "bolder"
+            New-TextBlock -Text "Offline" -color "Attention"
+        )
+    }
 )
-}
-@{
-type = "Column"
-width = "stretch"
-items = @(
-New-TextBlock -Text "Server 02" -weight "bolder"
-New-TextBlock -Text "Offline" -color "Attention"
-)
-}
-)
-
-New-ColumnSet -Columns $columns
+$columnSet = New-ColumnSet -Columns $columns
+New-AdaptiveCard -BodyContent $columnSet | Send-JsonToTeamsWebhook -WebhookURI $WebhookURI -fullWidth
 ```
+
+<img width="925" height="217" alt="image" src="https://github.com/user-attachments/assets/ccb98218-56cd-4018-9fd6-46e3b36008ab" />
 
 ---
 
